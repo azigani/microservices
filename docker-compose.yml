@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+    discovery-service:
+        image: discovery-service
+        ports:
+            - "8761:8761"
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://discovery-service:8761"]
+          interval: 5s
+          timeout: 3s
+          retries: 7
+    central-admin:
+        image: central-admin
+        ports: 
+            - "8083:8083"
+        depends_on:
+            - discovery-service
+        restart: on-failure
+        environment:
+            EUREKA_SERVER: http://discovery-service:8761/eureka
+    
